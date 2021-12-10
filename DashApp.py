@@ -7,7 +7,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from scipy import signal
 from assets import theory_text
-import assets
 
 app = Dash(update_title=None, title='Patterned Landscapes', external_stylesheets=[dbc.themes.MORPH])
 
@@ -23,7 +22,7 @@ max_alert = dbc.Alert(
 navbar = dbc.Navbar(children=[
     dbc.NavLink("How to use", id='usage-link', href='#', className='text-light'),
     dbc.NavLink("Theory", id='theory-link', href='#', className='text-light'),
-    dbc.NavLink("Code", className='text-light'),
+    dbc.NavLink("Code", href='https://github.com/stephencasey/PatternedLandscapes', className='text-light'),
     dbc.NavItem(children=[
         dbc.NavLink("References", href="#", id='references-link', active=False, className='text-light'),
         dbc.Popover(children=[
@@ -96,11 +95,12 @@ presets_block = html.Div(children=[
     dbc.Select(
         id='model-preset',
         options=[
-            {'label': 'Scale-free (anisotropic)', 'value': 'scale_free_a'},
-            {'label': 'Scale-free (isotropic)', 'value': 'scale_free_i'},
-            {'label': 'Periodic dots', 'value': 'periodic_1'},
-            {'label': 'Periodic maze', 'value': 'periodic_2'},
-            {'label': 'Periodic anisotropic', 'value': 'periodic_a'},
+            {'label': 'Periodic Dots', 'value': 'periodic_1'},
+            {'label': 'Periodic Labyrinth', 'value': 'periodic_2'},
+            {'label': 'Periodic Anisotropic', 'value': 'periodic_a'},
+            {'label': 'Scale-free', 'value': 'scale_free_i'},
+            {'label': 'Scale-free Anisotropic', 'value': 'scale_free_a'},
+            {'label': 'Random Forest', 'value': 'random_forest'},
             {'label': 'Custom', 'value': 'custom'}],
         value='periodic_1',
         size='lg',
@@ -124,10 +124,12 @@ parameter_block = html.Div(children=[
         dbc.Col(md=3, children=[
             dbc.Label('Kernel function', id='kernel-function-label', html_for='kernel-function'),
             dbc.Select(id='kernel-function',
-                       options=[{'label': 'Power Law', 'value': 'power'},
-                                {'label': 'Exponential', 'value': 'exponential'},
-                                {'label': 'Linear', 'value': 'linear'},
-                                {'label': 'Sinusoid', 'value': 'sinusoid'}],
+                       options=[
+                           {'label': 'Sinusoid', 'value': 'sinusoid'},
+                           {'label': 'Linear', 'value': 'linear'},
+                           {'label': 'Exponential', 'value': 'exponential'},
+                           {'label': 'Power Law', 'value': 'power'},
+                       ],
                        value='power',
                        style={'line-height': 12, }), ]),
         dbc.Col(md=2, children=[
@@ -136,7 +138,7 @@ parameter_block = html.Div(children=[
                        tooltip={'placement': 'bottom', 'always_visible': True})]),
         dbc.Col(md=2, children=[
             dbc.Label('Scaling', id='scaling-parameter-label', html_for='scaling-parameter'),
-            dcc.Slider(id='scaling-parameter', min=0, max=10, step=0.1, value=5,
+            dcc.Slider(id='scaling-parameter', min=0.1, max=8, step=0.05, value=2.5,
                        tooltip={'placement': 'bottom', 'always_visible': True})]),
         dbc.Col(md=2, children=[
             dbc.Label('Elongation', id='elongation-parameter-label', html_for='elongation-parameter'),
@@ -169,7 +171,7 @@ parameter_block = html.Div(children=[
             dcc.Slider(id='interval-length', min=100, max=2000, step=50, value=500,
                        tooltip={'placement': 'bottom', 'always_visible': True}), ]),
         dbc.Col(md=2, children=[
-            dbc.Label('Loop iterations', id='loop-iterations-label', html_for='loop-iterations'),
+            dbc.Label('Loops/interval', id='loop-iterations-label', html_for='loop-iterations'),
             dcc.Slider(id='loop-iterations', min=1, max=50, step=1, value=5,
                        tooltip={'placement': 'bottom', 'always_visible': True})]),
     ],
@@ -178,14 +180,16 @@ parameter_block = html.Div(children=[
 ])
 
 landscape_col = dbc.Col(md=6, children=[
+    html.H4("Landscape"),
     dcc.Graph(id='landscape-plot', config={'plotGlPixelRatio': 5}),
 ])
 
 continuous_kernel_col = dbc.Col(md=6, children=[
+html.H4("Kernel"),
     dcc.Graph(id='continuous-kernel-plot'),
 ])
 
-discrete_kernel_block = html.Div(children=[
+discrete_kernel_block = html.Div(children=[html.H4("Discretized Kernel"),
     dcc.Graph(id='discrete-kernel-plot'),
 ], id='discrete-kernel-div', hidden=True, style={'display': 'inline-block'})
 
@@ -235,8 +239,8 @@ tooltips = html.Div(children=[
         placement='top',
     ),
     dbc.Tooltip(
-        "Determines the rate that the video gets updated from the server. High values cause slow model progression, "
-        "while values too low will trigger updates before the server is ready (causing the video to freeze)",
+        "Determines the rate that the video gets updated from the server. Values too high cause slow model progression,"
+        " values too low will cause the video to freeze.)",
         target='interval-length-label',
         placement='top',
     ),
@@ -265,7 +269,7 @@ interval_max = 10000
 # App layout
 app.layout = dbc.Container(fluid=True, children=[
     max_alert,
-    html.H1('Patterned Landscape Generator', className='text-dark'),
+    html.H1('Patterned Landscape Synthesizer', className='text-dark'),
     navbar,
     html.Br(),
     usage_block,
@@ -276,10 +280,7 @@ app.layout = dbc.Container(fluid=True, children=[
     html.Br(),
     parameter_block,
     html.Br(),
-    dbc.Row([
-        landscape_col,
-        continuous_kernel_col,
-    ]),
+    dbc.Row([landscape_col, continuous_kernel_col]),
     discrete_kernel_block,
     tooltips,
     dcc.Interval(id='interval', interval=500, max_intervals=interval_max, disabled=True),
@@ -359,11 +360,13 @@ def make_kernel(distance, model, scaling_parameter, wavelength_parameter):
     Output('kernel-function', 'value'),
     Output('invert-switch', 'on'),
     Output('scaling-parameter', 'value'),
+    Output('scaling-parameter', 'min'),
     Output('elongation-parameter', 'value'),
     Output('wavelength-parameter', 'value'),
     Output('continuous-kernel-plot', 'figure'),
     Output('discrete-kernel-plot', 'figure'),
     Output('target-density', 'value'),
+    Output('density-correction', 'value'),
     Output('wavelength-collapse', 'is_open'),
     ServersideOutput('kernel-data', 'data'),
     ServersideOutput('max-facilitation-data', 'data'),
@@ -373,9 +376,10 @@ def make_kernel(distance, model, scaling_parameter, wavelength_parameter):
     Input('scaling-parameter', 'value'),
     Input('elongation-parameter', 'value'),
     Input('wavelength-parameter', 'value'),
-    State('target-density', 'value'), )
+    State('target-density', 'value'),
+    State('density-correction', 'value'))
 def build_kernels(model_preset, kernel_function, invert_kernel, scaling_parameter, elongation_parameter,
-                  wavelength_parameter, target_density, ):
+                  wavelength_parameter, target_density, density_correction):
     """ Generates kernels and their associated figures using callbacks"""
 
     # Preset definitions
@@ -383,37 +387,50 @@ def build_kernels(model_preset, kernel_function, invert_kernel, scaling_paramete
     if trigger_event and (trigger_event != 'model-preset'):
         model_preset = 'custom'
     elif model_preset == 'scale_free_a':
-        kernel_function = 'power'
+        kernel_function = 'exponential'
         invert_kernel = False
-        scaling_parameter = 6
-        elongation_parameter = 1.6
+        scaling_parameter = 5
+        elongation_parameter = 3
         target_density = 0.5
+        density_correction = 1
     elif model_preset == 'scale_free_i':
         kernel_function = 'exponential'
         invert_kernel = False
         scaling_parameter = 3
         elongation_parameter = 1
         target_density = 0.5
+        density_correction = 1
     elif model_preset == 'periodic_1':
         kernel_function = 'sinusoid'
         invert_kernel = False
-        scaling_parameter = 0.7
+        scaling_parameter = 0.5
         elongation_parameter = 1
         target_density = 0.5
         wavelength_parameter = 6
+        density_correction = 1
     elif model_preset == 'periodic_2':
         kernel_function = 'sinusoid'
         invert_kernel = False
-        scaling_parameter = 1.2
+        scaling_parameter = .5
         elongation_parameter = 1
-        target_density = 0.5
+        target_density = 0.7
+        wavelength_parameter = 7.5
+        density_correction = 1.3
     elif model_preset == 'periodic_a':
         kernel_function = 'sinusoid'
         invert_kernel = False
-        scaling_parameter = 2
-        elongation_parameter = 1.6
+        scaling_parameter = 1.2
+        elongation_parameter = 2.5
         wavelength_parameter = 3.5
-        target_density = 0.5
+        target_density = 0.7
+        density_correction = 1.2
+    elif model_preset == 'random_forest':
+        kernel_function = 'linear'
+        invert_kernel = True
+        scaling_parameter = 2.2
+        elongation_parameter = 1
+        target_density = 0.4
+        density_correction = 0.8
 
     # Hide/show wavelength parameter
     if kernel_function == 'sinusoid':
@@ -422,7 +439,12 @@ def build_kernels(model_preset, kernel_function, invert_kernel, scaling_paramete
         wavelength_open = False
 
     # Find distance that yields EXACTLY target_cumulative_p % of the entire distribution (eg. 99%)
+    scaling_min = 0.1
     if kernel_function == 'power':
+        # Keep scaling parameter in sane range
+        scaling_min = 1
+        if scaling_parameter < 1:
+            scaling_parameter = 1
         target_distance = (1 - target_cumulative_p) ** (-1 / scaling_parameter)
     elif kernel_function == 'exponential':
         target_distance = -np.log(1 - target_cumulative_p) / scaling_parameter
@@ -468,7 +490,7 @@ def build_kernels(model_preset, kernel_function, invert_kernel, scaling_paramete
     c_kernel_fig.update_scenes(aspectmode='manual', aspectratio=dict(x=1, y=elongation_parameter, z=1), )
     c_kernel_fig.update_layout(
         {'plot_bgcolor': 'rgba(0,0,0,0)',
-         'paper_bgcolor': 'rgba(0,0,0,0)', }, title='Kernel',
+         'paper_bgcolor': 'rgba(0,0,0,0)', },
         coloraxis=dict(colorscale='Plasma'),
         scene=dict(
             xaxis=dict(showbackground=False, gridcolor='silver', tickvals=c_xticks, ticktext=x_ticklabels),
@@ -480,7 +502,7 @@ def build_kernels(model_preset, kernel_function, invert_kernel, scaling_paramete
     # Plot discretized kernel
     kernel_fig = go.Figure(go.Heatmap(z=k_copy, coloraxis='coloraxis'), )
     kernel_fig.update_layout({'plot_bgcolor': 'rgba(0,0,0,0)',
-                              'paper_bgcolor': 'rgba(0,0,0,0)', }, title='Discretized Kernel',
+                              'paper_bgcolor': 'rgba(0,0,0,0)', },
                              coloraxis=dict(colorscale='Plasma'),
                              xaxis=dict(gridcolor='silver', tickvals=xticks, ticktext=x_ticklabels),
                              yaxis=dict(scaleanchor='x', gridcolor='silver', tickvals=yticks, ticktext=y_ticklabels),
@@ -492,8 +514,9 @@ def build_kernels(model_preset, kernel_function, invert_kernel, scaling_paramete
     positive_kernel = kernel.copy()
     positive_kernel[positive_kernel < 0] = 0
     max_facilitation = signal.convolve2d(landscape_ones, positive_kernel, boundary='fill', mode='same')
-    return model_preset, kernel_function, invert_kernel, scaling_parameter, elongation_parameter, \
-           wavelength_parameter, c_kernel_fig, kernel_fig, target_density, wavelength_open, kernel, max_facilitation
+    return model_preset, kernel_function, invert_kernel, scaling_parameter, scaling_min, elongation_parameter, \
+           wavelength_parameter, c_kernel_fig, kernel_fig, target_density, density_correction, wavelength_open, kernel,\
+           max_facilitation
 
 
 @app.callback(
@@ -507,8 +530,7 @@ def build_kernels(model_preset, kernel_function, invert_kernel, scaling_paramete
     State('kernel-data', 'data'),
     State('max-facilitation-data', 'data'),
     State('target-density', 'value'))
-def run_model(density_correction, loop_iterations, landscape, kernel,
-              max_facilitation, target_density, ):
+def run_model(density_correction, loop_iterations, landscape, kernel, max_facilitation, target_density, ):
     """ Runs the model and produces figures using Dash interval callbacks """
 
     trigger_event = callback_context.triggered[0]['prop_id'].split('.')[0]
@@ -523,6 +545,7 @@ def run_model(density_correction, loop_iterations, landscape, kernel,
         # Speed up model progression by running multiple iterations within each dcc.interval
         # Loop running time should be as close to interval time without exceeding
         for n in range(loop_iterations):
+
             facilitation = signal.convolve2d(landscape, kernel, boundary='fill', mode='same')
             kernel_effect = np.divide(facilitation, max_facilitation)
             density = np.mean(landscape) / density_correction
@@ -539,7 +562,6 @@ def run_model(density_correction, loop_iterations, landscape, kernel,
     landscape_fig = px.imshow(landscape, zmin=0, zmax=1, aspect='equal', )
     landscape_fig.update_layout({'plot_bgcolor': 'rgba(0,0,0,0)',
                                  'paper_bgcolor': 'rgba(0,0,0,0)'},
-                                title='Landscape',
                                 margin=dict(t=30, r=30, b=30, l=30),
                                 coloraxis_colorbar=dict(
                                     title="Cell Type",
@@ -590,7 +612,6 @@ def show_howtouse(n_clicks, is_displayed):
     if n_clicks:
         return not is_displayed
     return is_displayed
-
 
 @app.callback(
     Output('theory-block', 'is_open'),

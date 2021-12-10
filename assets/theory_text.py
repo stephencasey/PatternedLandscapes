@@ -24,13 +24,13 @@ other_paragraphs = html.P(children=[
     function of the distance between a cell and its neighbors. For the pine forest example, close neighbors have an 
     inhibitory effect: trees have to compete for sunlight and space and may not grow as well if they were more spaced 
     out. The kernel function for this case would be very negative for very close neighbors, somewhat negative for 
-    less close neighbors, and zero at some distance further away. Choose the 'Random forest' preset and click 'Start'
+    less close neighbors, and zero at some distance further away. Choose the 'Random Forest' preset and click 'Start'
     to run this model. 
     """,
     html.Br(),
     html.Br(),
     """
-    The kernel function illustrates this graphically, showing a function that is very negative in the middle and 
+    The kernel function illustrates this relationship graphically, showing a function that is very negative in the middle and 
     gradually approaches zero as the distance from the x,y origin increases. Conversely, we can have the opposite 
     effect, where having close neighbors is actually a good thing and contributes to growth. In dry landscapes where 
     water is scarce and sunlight is plentiful, larger plants may produce shading for younger seedlings. Likewise, 
@@ -41,7 +41,7 @@ other_paragraphs = html.P(children=[
     approaches zero as you get further away. Patterns of this type are referred to as “scale-free" patterning because 
     they have many statistical features that can't be characterized by a characteristic scale of reference (such as 
     power-law distributions in patch sizes, similarities to fractals, and a lack of a characteristic wavelength). The 
-    'Scale-free (isotropic)' presets use this kernel.
+    'Scale-Free' presets produce these patterns.
     """,
     html.Br(),
     html.Br(),
@@ -63,7 +63,7 @@ other_paragraphs = html.P(children=[
     """
     In some landscapes, the effects of neighbors may be stronger in some directions than others. The slope of the 
     landscape in dry landscapes or the direction of water flow in wetlands can cause kernels that act differently in 
-    different directions (i.e., they are anisotropic). The 'Scale- free (anisotropic)' and 'periodic (anisotropic)' 
+    different directions (i.e., they are anisotropic). The 'Scale-free Anisotropic' and 'Periodic Anisotropic' 
     presets illustrate this. 
     """,
     html.Br(),
