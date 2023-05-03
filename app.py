@@ -28,26 +28,26 @@ max_iteration_alert = dbc.Alert(
 
 main_header = html.H1('Patterned Landscape Synthesizer', className='text-dark')
 
-
 navbar = dbc.Navbar(color='primary', children=[
-    dbc.NavLink("How to use", id='usage-link', href='#', className='text-light'),
-    dbc.NavLink("Theory", id='theory-link', href='#', className='text-light'),
-    dbc.NavItem(children=[
+    dbc.Row([
+    dbc.Col(),
+    dbc.Col(dbc.NavLink("How to use", id='usage-link', href='#', className='text-light'), width="auto"),
+    dbc.Col(dbc.NavLink("Theory", id='theory-link', href='#', className='text-light')),
+    dbc.Col(dbc.NavItem(children=[
         dbc.NavLink("References", href="#", id='references-link', active=False, className='text-light'),
         dbc.Popover(children=[
             dbc.PopoverHeader("References"),
             dbc.PopoverBody(theory_text.references)], id='references-popover', target='references-link',
             trigger='click')
-    ]),
-    dbc.NavLink("Code", href='https://github.com/stephencasey/PatternedLandscapes', className='text-light'),
-    dbc.DropdownMenu(toggleClassName='text-light', label='Links', nav=True, children=[
+            ])),
+    dbc.Col(dbc.NavLink("Code", href='https://github.com/stephencasey/PatternedLandscapes', className='text-light')),
+    dbc.Col(dbc.DropdownMenu(toggleClassName='text-light', label='Links', nav=True, children=[
         dbc.DropdownMenuItem("Portfolio", href='http://stephentcasey.com/'),
         dbc.DropdownMenuItem("GitHub", href='https://github.com/stephencasey'),
         dbc.DropdownMenuItem("LinkedIn", href='https://www.linkedin.com/in/steve-casey/')
-    ]),
-    html.Br(),
-])
-
+        ])),
+    ], align='center'),
+    ])
 
 usage_block = dbc.Collapse(id='usage-block', is_open=False, children=[
     html.H3('How to use'),
@@ -99,7 +99,6 @@ theory_block = dbc.Collapse(id='theory-block', is_open=False, children=[
 
 
 presets_block = html.Div(style={'width': '50%'}, children=[
-    html.Br(),
     html.H3('Select a preset:'),
     dbc.Select(
         id='model-preset', value='periodic_1', size='lg',
@@ -142,20 +141,20 @@ main_parameter_controls = dbc.Row(children=[
                    style={'line-height': 12, }), ]),
     dbc.Col(md=2, children=[
         dbc.Label('Density', id='density-label', html_for='scaling-parameter'),
-        dcc.Slider(id='target-density', min=0, max=1, step=0.01, value=.5,
+        dcc.Slider(id='target-density', min=0, max=1, step=0.01, value=.5, marks=None,
                    tooltip={'placement': 'bottom', 'always_visible': True})]),
     dbc.Col(md=2, children=[
         dbc.Label('Scaling', id='scaling-parameter-label', html_for='scaling-parameter'),
-        dcc.Slider(id='scaling-parameter', min=0.1, max=8, step=0.05, value=2.5,
+        dcc.Slider(id='scaling-parameter', min=0.1, max=8, step=0.05, value=2.5, marks=None,
                    tooltip={'placement': 'bottom', 'always_visible': True})]),
     dbc.Col(md=2, children=[
         dbc.Label('Elongation', id='elongation-parameter-label', html_for='elongation-parameter'),
-        dcc.Slider(id='elongation-parameter', min=1, max=5, step=0.05, value=1,
+        dcc.Slider(id='elongation-parameter', min=1, max=5, step=0.05, value=1, marks=None,
                    tooltip={'placement': 'bottom', 'always_visible': True})]),
     dbc.Col(md=2, children=[
         dbc.Collapse(id='wavelength-collapse', is_open=True, children=[
             dbc.Label('Wavelength', id='wavelength-parameter-label', html_for='wavelength-parameter'),
-            dcc.Slider(id='wavelength-parameter', min=1, max=10, step=0.1, value=5,
+            dcc.Slider(id='wavelength-parameter', min=1, max=10, step=0.1, value=5, marks=None,
                        tooltip={'placement': 'bottom', 'always_visible': True})])]),
     dbc.Col(md=1, children=[
         dbc.Label('Expert Mode', id='expert-mode-label', html_for='expert-mode-switch'),
@@ -174,17 +173,17 @@ expert_mode_controls = dbc.Collapse(id='expert-mode-block', is_open=True, childr
                       id='density-correction-label',
                       html_for='density-correction'),
             dcc.Slider(id='density-correction', min=0, max=5,
-                       step=0.1, value=1,
+                       step=0.1, value=1, marks=None,
                        tooltip={'placement': 'bottom', 'always_visible': True}),
         ]),
         dbc.Col(md=2, children=[
             dbc.Label('Interval length', id='interval-length-label', html_for='interval-length'),
-            dcc.Slider(id='interval-length', min=100, max=2000, step=50, value=600,
+            dcc.Slider(id='interval-length', min=100, max=2000, step=50, value=600, marks=None,
                        tooltip={'placement': 'bottom', 'always_visible': True}),
         ]),
         dbc.Col(md=2, children=[
             dbc.Label('Change per iteration', id='change-per-iter-label', html_for='change-per-iter'),
-            dcc.Slider(id='change-per-iteration', min=.05, max=1, step=.05, value=.2,
+            dcc.Slider(id='change-per-iteration', min=.05, max=1, step=.05, value=.2, marks=None,
                        tooltip={'placement': 'bottom', 'always_visible': True})
         ])
     ])
@@ -194,19 +193,21 @@ parameter_block = html.Div(children=[
     main_parameter_controls,
     html.Br(),
     expert_mode_controls,
+    html.Br(),
 ])
 
 
 top_figure_block = dbc.Row(children=[
-    html.Hr(),
-    dbc.Col(md=6, children=[html.H4("Landscape"), dcc.Loading(dcc.Graph(id='landscape-plot', config={'plotGlPixelRatio': 5})), ]),
-    dbc.Col(md=6, children=[html.H4("Kernel"), dcc.Loading(dcc.Graph(id='continuous-kernel-plot')), ])])
+    dbc.Col(md=6, children=[html.H4("Landscape"), dcc.Graph(id='landscape-plot', config={'plotGlPixelRatio': 5}), ]),
+    dbc.Col(md=6, children=[html.H4("Kernel"), dcc.Graph(id='continuous-kernel-plot'), ])])
 
 
 discrete_kernel_block = html.Div(id='discrete-kernel-div', hidden=True, style={'display': 'inline-block'}, children=[
     html.H4("Discretized Kernel"),
-    dcc.Loading(dcc.Graph(id='discrete-kernel-plot')),
+    dcc.Graph(id='discrete-kernel-plot'),
 ])
+
+emptyBreak = html.Br()
 
 
 tooltips = html.Div(children=[
@@ -287,11 +288,13 @@ app.layout = dbc.Container(fluid=True, children=[
     max_iteration_alert,
     main_header,
     navbar,
+    emptyBreak,
     usage_block,
     theory_block,
     presets_block,
-    parameter_block,
     start_stop_row,
+    emptyBreak,
+    parameter_block,
     top_figure_block,
     discrete_kernel_block,
     tooltips,
