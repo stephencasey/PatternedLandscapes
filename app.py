@@ -10,7 +10,7 @@ import numpy as np
 import plotly.graph_objects as go
 from assets import theory_text
 from dash import html, dcc, callback_context
-from dash_extensions.enrich import Dash, Output, Input, State, ServersideOutput, Trigger
+from dash_extensions.enrich import Dash, Output, Input, State, Trigger
 from flask import Flask
 from scipy import signal
 
@@ -28,10 +28,10 @@ max_iteration_alert = dbc.Alert(
 
 main_header = html.H1('Patterned Landscape Synthesizer', className='text-dark')
 
+
 navbar = dbc.Navbar(color='primary', children=[
     dbc.Row([
-    dbc.Col(),
-    dbc.Col(dbc.NavLink("How to use", id='usage-link', href='#', className='text-light'), width="auto"),
+    dbc.Col(dbc.NavLink("How to use", id='usage-link', href='#', className='text-light'),width='auto'),
     dbc.Col(dbc.NavLink("Theory", id='theory-link', href='#', className='text-light')),
     dbc.Col(dbc.NavItem(children=[
         dbc.NavLink("References", href="#", id='references-link', active=False, className='text-light'),
@@ -39,15 +39,15 @@ navbar = dbc.Navbar(color='primary', children=[
             dbc.PopoverHeader("References"),
             dbc.PopoverBody(theory_text.references)], id='references-popover', target='references-link',
             trigger='click')
-            ])),
+    ])),
     dbc.Col(dbc.NavLink("Code", href='https://github.com/stephencasey/PatternedLandscapes', className='text-light')),
     dbc.Col(dbc.DropdownMenu(toggleClassName='text-light', label='Links', nav=True, children=[
         dbc.DropdownMenuItem("Portfolio", href='http://stephentcasey.com/'),
         dbc.DropdownMenuItem("GitHub", href='https://github.com/stephencasey'),
         dbc.DropdownMenuItem("LinkedIn", href='https://www.linkedin.com/in/steve-casey/')
-        ])),
-    ], align='center'),
-    ])
+    ])),
+], align='center', style={'margin': 1})])
+
 
 usage_block = dbc.Collapse(id='usage-block', is_open=False, children=[
     html.H3('How to use'),
@@ -99,6 +99,7 @@ theory_block = dbc.Collapse(id='theory-block', is_open=False, children=[
 
 
 presets_block = html.Div(style={'width': '50%'}, children=[
+    html.Br(),
     html.H3('Select a preset:'),
     dbc.Select(
         id='model-preset', value='periodic_1', size='lg',
@@ -116,14 +117,6 @@ presets_block = html.Div(style={'width': '50%'}, children=[
 ])
 
 
-start_stop_row = dbc.Row(children=[
-    dbc.Col(md=4, children=[
-        dbc.Button("Start", id="start-stop", size='lg', ),
-        dbc.Button("Reset landscape", id="reset", type='reset', size='lg',
-                   style={'line-height': 0, 'background-color': '#378dfc', 'color': 'white'})
-    ]),
-    html.Br(),
-])
 
 
 main_parameter_controls = dbc.Row(children=[
@@ -138,7 +131,7 @@ main_parameter_controls = dbc.Row(children=[
                        {'label': 'Power Law', 'value': 'power'},
                    ],
                    value='power',
-                   style={'line-height': 12, }), ]),
+                   style={'line-height': 12, 'marginBottom': 12}), ]),
     dbc.Col(md=2, children=[
         dbc.Label('Density', id='density-label', html_for='scaling-parameter'),
         dcc.Slider(id='target-density', min=0, max=1, step=0.01, value=.5, marks=None,
@@ -178,12 +171,12 @@ expert_mode_controls = dbc.Collapse(id='expert-mode-block', is_open=True, childr
         ]),
         dbc.Col(md=2, children=[
             dbc.Label('Interval length', id='interval-length-label', html_for='interval-length'),
-            dcc.Slider(id='interval-length', min=100, max=2000, step=50, value=600, marks=None,
+            dcc.Slider(id='interval-length', min=100, max=2000, step=50, value=400, marks=None,
                        tooltip={'placement': 'bottom', 'always_visible': True}),
         ]),
         dbc.Col(md=2, children=[
-            dbc.Label('Change per iteration', id='change-per-iter-label', html_for='change-per-iter'),
-            dcc.Slider(id='change-per-iteration', min=.05, max=1, step=.05, value=.2, marks=None,
+            dbc.Label('Δ per iteration', id='change-per-iter-label', html_for='change-per-iter'),
+            dcc.Slider(id='change-per-iteration', min=.05, max=1, step=.05, value=.2, marks=None, 
                        tooltip={'placement': 'bottom', 'always_visible': True})
         ])
     ])
@@ -191,23 +184,29 @@ expert_mode_controls = dbc.Collapse(id='expert-mode-block', is_open=True, childr
 
 parameter_block = html.Div(children=[
     main_parameter_controls,
-    html.Br(),
     expert_mode_controls,
+    html.Br()
+])
+
+start_stop_row = dbc.Row(children=[
+    dbc.Col(md=4, children=[
+        dbc.Button("Start", id="start-stop", size='lg', ),
+        dbc.Button("Reset landscape", id="reset", type='reset', size='lg',
+                   style={'line-height': 0, 'background-color': '#378dfc', 'color': 'white','margin': 6})
+    ]),
     html.Br(),
 ])
 
-
 top_figure_block = dbc.Row(children=[
+    html.Hr(),
     dbc.Col(md=6, children=[html.H4("Landscape"), dcc.Graph(id='landscape-plot', config={'plotGlPixelRatio': 5}), ]),
-    dbc.Col(md=6, children=[html.H4("Kernel"), dcc.Graph(id='continuous-kernel-plot'), ])])
+    dbc.Col(md=6, children=[html.H4("Kernel"), dcc.Loading(dcc.Graph(id='continuous-kernel-plot')), ])])
 
 
 discrete_kernel_block = html.Div(id='discrete-kernel-div', hidden=True, style={'display': 'inline-block'}, children=[
     html.H4("Discretized Kernel"),
-    dcc.Graph(id='discrete-kernel-plot'),
+    dcc.Loading(dcc.Graph(id='discrete-kernel-plot')),
 ])
-
-emptyBreak = html.Br()
 
 
 tooltips = html.Div(children=[
@@ -240,7 +239,7 @@ tooltips = html.Div(children=[
         placement='top',
     ),
     dbc.Tooltip(
-        "Unlocks more parameters and an extra figure",
+        "Unlocks more parameters and visualizations",
         target='expert-mode-label',
         placement='top',
     ),
@@ -288,13 +287,11 @@ app.layout = dbc.Container(fluid=True, children=[
     max_iteration_alert,
     main_header,
     navbar,
-    emptyBreak,
     usage_block,
     theory_block,
     presets_block,
-    start_stop_row,
-    emptyBreak,
     parameter_block,
+    start_stop_row,
     top_figure_block,
     discrete_kernel_block,
     tooltips,
@@ -545,7 +542,7 @@ def build_kernels(model_preset, kernel_function, invert_kernel, scaling_paramete
 
 @app.callback(
     Output('landscape-plot', 'figure'),
-    ServersideOutput('landscape-data', 'data'),
+    Output('landscape-data', 'data'),
     Trigger('interval', 'n_intervals'),
     Trigger('reset', 'n_clicks'),
     State('density-correction', 'value'),
@@ -561,8 +558,10 @@ def run_model(density_correction, change_per_iteration, landscape, kernel, max_f
 
     if trigger_event != 'interval':
         landscape = np.random.randint(0, 2, landscape_size)
+        
     # Interval acts as an outer loop
     else:
+        landscape = np.array(landscape)
         # Rescale target density higher for kernels with negative values
         effective_density = target_density * density_correction
 
