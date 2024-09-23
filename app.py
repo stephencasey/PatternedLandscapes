@@ -9,8 +9,8 @@ import dash_daq as daq
 import numpy as np
 import plotly.graph_objects as go
 from assets import theory_text
-from dash import html, dcc, callback_context
-from dash_extensions.enrich import Dash, Output, Input, State, Trigger
+from dash import html, dcc, callback_context, Output, Input, State
+from dash_extensions.enrich import Dash, Trigger
 from flask import Flask
 from scipy import signal
 
@@ -98,10 +98,11 @@ theory_block = dbc.Collapse(id='theory-block', is_open=False, children=[
                             )
 
 
-presets_block = html.Div(style={'width': '50%'}, children=[
+presets_block = html.Div(children=[dbc.Row(children=[
     html.Br(),
     html.H3('Select a preset:'),
-    dbc.Select(
+    dbc.Col(md=3, children=[
+            dbc.Select(
         id='model-preset', value='periodic_1', size='lg',
         options=[
             {'label': 'Periodic Dots', 'value': 'periodic_1'},
@@ -113,8 +114,11 @@ presets_block = html.Div(style={'width': '50%'}, children=[
             {'label': 'Custom', 'value': 'custom'}
         ],
     ),
+    ]),
+
     html.Br(),
-])
+    html.Br(),
+])])
 
 
 
