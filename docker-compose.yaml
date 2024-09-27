@@ -34,7 +34,9 @@ services:
              -d patterned-landscapes.stephentcasey.com
     volumes:
       - ./etc/letsencrypt:/etc/letsencrypt
-      - ./certbot/data:/var/www/certbot   
+      - ./certbot/data:/var/www/certbot
+    networks: 
+      - main    
 networks:
     main:
       driver: bridge    
