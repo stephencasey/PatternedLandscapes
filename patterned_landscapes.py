@@ -38,7 +38,7 @@ navbar = dbc.Navbar(color='primary', children=[
         dbc.Popover(children=[
             dbc.PopoverHeader("References"),
             dbc.PopoverBody(theory_text.references)], id='references-popover', target='references-link',
-            trigger='click')
+            trigger='focus')
     ])),
     dbc.Col(dbc.NavLink("Code", href='https://github.com/stephencasey/PatternedLandscapes', className='text-light')),
     dbc.Col(dbc.DropdownMenu(toggleClassName='text-light', label='Links', nav=True, children=[
@@ -49,7 +49,7 @@ navbar = dbc.Navbar(color='primary', children=[
 ], align='center', style={'margin': 1})])
 
 
-usage_block = dbc.Collapse(id='usage-block', is_open=False, children=[
+usage_block = dbc.Collapse(style={'marginTop': 24, 'marginBottom': 12}, id='usage-block', is_open=False, children=[
     html.H3('How to use'),
     html.P(['To get started, choose a preset from the dropdown and click the '
             '"Start" button. The app will then display a video of a synthetic landscape as it '
@@ -65,7 +65,7 @@ usage_block = dbc.Collapse(id='usage-block', is_open=False, children=[
 
 image_style = {'height': '250px', 'width': '250px', 'margin': '1px'}
 
-theory_block = dbc.Collapse(id='theory-block', is_open=False, children=[
+theory_block = dbc.Collapse(style={'marginTop': 24, 'marginBottom': 12}, id='theory-block', is_open=False, children=[
     html.H3('Theory'),
     theory_text.first_paragraph,
     dbc.Row(children=[
@@ -98,8 +98,7 @@ theory_block = dbc.Collapse(id='theory-block', is_open=False, children=[
                             )
 
 
-presets_block = html.Div(children=[dbc.Row(children=[
-    html.Br(),
+presets_block = html.Div(style={'marginTop': 24, 'marginBottom': 12}, children=[dbc.Row(children=[
     html.H3('Select a preset:'),
     dbc.Col(md=3, children=[
             dbc.Select(
@@ -115,9 +114,6 @@ presets_block = html.Div(children=[dbc.Row(children=[
         ],
     ),
     ]),
-
-    html.Br(),
-    html.Br(),
 ])])
 
 
@@ -175,12 +171,12 @@ expert_mode_controls = dbc.Collapse(id='expert-mode-block', is_open=True, childr
         ]),
         dbc.Col(md=2, children=[
             dbc.Label('Interval length', id='interval-length-label', html_for='interval-length'),
-            dcc.Slider(id='interval-length', min=100, max=2000, step=50, value=400, marks=None,
+            dcc.Slider(id='interval-length', min=100, max=2000, step=50, value=700, marks=None,
                        tooltip={'placement': 'bottom', 'always_visible': True}),
         ]),
         dbc.Col(md=2, children=[
             dbc.Label('Δ per iteration', id='change-per-iter-label', html_for='change-per-iter'),
-            dcc.Slider(id='change-per-iteration', min=.05, max=1, step=.05, value=.2, marks=None, 
+            dcc.Slider(id='change-per-iteration', min=.05, max=1, step=.05, value=.15, marks=None, 
                        tooltip={'placement': 'bottom', 'always_visible': True})
         ])
     ])
@@ -189,7 +185,6 @@ expert_mode_controls = dbc.Collapse(id='expert-mode-block', is_open=True, childr
 parameter_block = html.Div(children=[
     main_parameter_controls,
     expert_mode_controls,
-    html.Br()
 ])
 
 start_stop_row = dbc.Row(children=[
@@ -198,10 +193,9 @@ start_stop_row = dbc.Row(children=[
         dbc.Button("Reset landscape", id="reset", type='reset', size='lg',
                    style={'line-height': 0, 'background-color': '#378dfc', 'color': 'white','margin': 6})
     ]),
-    html.Br(),
 ])
 
-top_figure_block = dbc.Row(children=[
+top_figure_block = dbc.Row(style={'marginTop': 24, 'marginBottom': 12}, children=[
     html.Hr(),
     dbc.Col(md=6, children=[html.H4("Landscape"), dcc.Graph(id='landscape-plot', config={'plotGlPixelRatio': 5}), ]),
     dbc.Col(md=6, children=[html.H4("Kernel"), dcc.Loading(dcc.Graph(id='continuous-kernel-plot')), ])])

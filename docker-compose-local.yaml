@@ -8,4 +8,4 @@ services:
     volumes:
       - ./etc/letsencrypt:/etc/letsencrypt
     command: >-
-          python3 -m gunicorn -w 4 -b 0.0.0.0:8050 wsgi:server --timeout 120
+          python3 -m gunicorn -w 4 -b 0.0.0.0:8050 wsgi:server
