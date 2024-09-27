@@ -2,9 +2,14 @@ FROM python:3.12-slim-bullseye
 
 WORKDIR /app
 COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
 
-COPY . .
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
 EXPOSE 8050
-CMD [ "gunicorn", "--workers=4", "--threads=2", "-b 0.0.0.0:8050", "app:server"]
+COPY . .
+
+
