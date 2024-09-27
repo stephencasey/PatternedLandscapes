@@ -18,18 +18,25 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - /var/secure-api/data/certbot/conf:/etc/letsencrypt
-      - /var/secure-api/data/certbot/www:/var/www/certbot 
+      - ./etc/nginx/templates:/etc/nginx/templates:ro
+      - ./etc/letsencrypt:/etc/letsencrypt:ro
+      - ./certbot/data:/var/www/certbot
     networks: 
       - main
-
-  certbot-auto:
-    build:
-      context: ./certbot-auto
+  certbot:
+    container_name: certbot
+    image: certbot/certbot:latest
+    depends_on:
+      - nginx
+    command: >-
+             certonly --reinstall --webroot --webroot-path=/var/www/certbot
+             --email thornhill52320@gmail.com --agree-tos --no-eff-email
+             -d patterned-landscapes.stephentcasey.com
     volumes:
-      - /var/secure-api/data/certbot/conf:/etc/letsencrypt
-      - /var/secure-api/data/certbot/www:/var/www/certbot 
-    
+      - ./etc/letsencrypt:/etc/letsencrypt
+      - ./certbot/data:/var/www/certbot
+    networks: 
+      - main    
 networks:
     main:
-      driver: bridge      
+      driver: bridge    
