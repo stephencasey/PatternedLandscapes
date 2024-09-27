@@ -10,9 +10,9 @@ sudo ufw allow 80
 sudo ufw allow 443
 
 # Install certbot
-docker compose -f ./docker-compose-initiate.yaml up -d nginx
-docker compose -f ./docker-compose-initiate.yaml up certbot
-docker compose -f ./docker-compose-initiate.yaml down
+docker compose -f ./docker-compose-initiate.yml up -d nginx
+docker compose -f ./docker-compose-initiate.yml up certbot
+docker compose -f ./docker-compose-initiate.yml down
 
 # some configurations for let's encrypt
 curl -L --create-dirs -o etc/letsencrypt/options-ssl-nginx.conf https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf
