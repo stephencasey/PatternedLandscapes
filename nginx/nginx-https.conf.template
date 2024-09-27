@@ -34,8 +34,6 @@ server {
     gzip_types        text/plain text/css application/json application/javascript application/x-javascript text/xml application/xml application/xml+rss text/javascript;
     gzip_comp_level   9;
 
-    root /usr/share/nginx/html;
-
     location = /.well-known/assetlinks.json {
         try_files $uri =404;
     }
