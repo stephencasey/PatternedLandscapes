@@ -10,9 +10,6 @@ sudo ufw allow 80
 sudo ufw allow 443
 
 # Install certbot
-docker-compose -f docker-compose.initial.yml up --build
-docker-compose up --build
+docker compose -f docker-compose.initial.yml up --build
+docker compose up --build
 
-# Set up Autorenewal of certbot
-crontab ./etc/crontab
-docker compose -f ./docker-compose.yaml up
