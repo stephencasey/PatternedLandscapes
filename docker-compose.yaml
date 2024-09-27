@@ -4,8 +4,32 @@ services:
     container_name: "flask"
     build: .
     ports:
-        - "443:8050"
+        - "8050:8050"
     volumes:
-      - ./etc/letsencrypt:/etc/letsencrypt
+      - /var/secure-api/share/web:/share
     command: >-
           python3 -m gunicorn -w 4 -b 0.0.0.0:8050 --certfile /etc/letsencrypt/live/patterned-landscapes.stephentcasey.com/fullchain.pem --keyfile /etc/letsencrypt/live/patterned-landscapes.stephentcasey.com/privkey.pem wsgi:server --timeout 120
+    networks: 
+      - main
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/secure-api/data/certbot/conf:/etc/letsencrypt
+      - /var/secure-api/data/certbot/www:/var/www/certbot 
+    networks: 
+      - main
+
+  certbot-auto:
+    build:
+      context: ./certbot-auto
+    volumes:
+      - /var/secure-api/data/certbot/conf:/etc/letsencrypt
+      - /var/secure-api/data/certbot/www:/var/www/certbot 
+    
+networks:
+    main:
+      driver: bridge      

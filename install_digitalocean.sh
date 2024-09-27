@@ -10,8 +10,8 @@ sudo ufw allow 80
 sudo ufw allow 443
 
 # Install certbot
-sudo apt-get install certbot
-certbot certonly --standalone -d patterned-landscapes.stephentcasey.com --email thornhill52320@gmail.com -n --agree-tos --no-eff-email
+docker-compose -f docker-compose.initial.yml up --build
+docker-compose up --build
 
 # Set up Autorenewal of certbot
 crontab ./etc/crontab
