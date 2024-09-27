@@ -6,6 +6,7 @@ curl -SL https://github.com/docker/compose/releases/download/v2.3.3/docker-compo
 chmod +x ~/.docker/cli-plugins/docker-compose
 
 # Open firewall
+sudo ufw allow 80
 sudo ufw allow 443
 
 # Install certbot
@@ -14,4 +15,4 @@ certbot certonly --standalone -d patterned-landscapes.stephentcasey.com --email 
 
 # Set up Autorenewal of certbot
 crontab ./etc/crontab
-docker-compose -f ./docker-compose.yaml up
+docker compose -f ./docker-compose.yaml up
