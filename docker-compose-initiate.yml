@@ -4,8 +4,6 @@ services:
   nginx:
     container_name: nginx
     image: nginx:latest
-    environment:
-      - DOMAIN
     ports:
       - 80:80
     volumes:
