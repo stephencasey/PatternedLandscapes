@@ -6,6 +6,7 @@ echo DOMAIN=${DOMAIN} >> .env
 echo EMAIL=${EMAIL} >> .env
 
 # Phase 1
+sudo apt-get install certbot
 certbot certonly -d ${DOMAIN} -n — standalone --email ${EMAIL} --agree-tos --no-eff-email
 
 # Phase 2
