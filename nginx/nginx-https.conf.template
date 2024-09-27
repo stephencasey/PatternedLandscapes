@@ -36,6 +36,10 @@ server {
 
     root /usr/share/nginx/html;
 
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }    
+
     location = /.well-known/assetlinks.json {
         try_files $uri =404;
     }
