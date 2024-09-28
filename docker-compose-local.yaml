@@ -12,8 +12,6 @@ services:
   nginx:
     build:
       context: ./nginx
-      args: 
-        NGINX_CONFIG: nginx-local.conf.template
     ports:
       - 80:80
       - 443:443
