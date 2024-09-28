@@ -1,6 +1,6 @@
 certbot certonly \
         --standalone \
-        -d patterned-landscapes.stephentcasey.com\
+        -d patterned-landscapes2.stephentcasey.com\
         -m thornhill52320@gmail.com \
         --rsa-key-size "2048" \
         --agree-tos \

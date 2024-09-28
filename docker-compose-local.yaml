@@ -4,8 +4,23 @@ services:
     container_name: "flask"
     build: .
     ports:
-        - "80:8050"
+        - "8050:8050"
     volumes:
       - ./etc/letsencrypt:/etc/letsencrypt
     command: >-
           python3 -m gunicorn -w 4 -b 0.0.0.0:8050 wsgi:server
+    networks: 
+      - main
+  nginx:
+    build:
+      context: ./nginx
+      args: 
+        NGINX_CONFIG: nginx-local.conf.template
+    ports:
+      - 80:80
+      - 443:443
+    networks: 
+      - main
+networks:
+    main:
+      driver: bridge 

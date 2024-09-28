@@ -4,16 +4,18 @@ services:
     container_name: "flask"
     build: .
     ports:
-        - "8050:8050"
+      - "8050:8050"
     volumes:
       - /var/secure-api/share/web:/share
     command: >-
-          python3 -m gunicorn -w 2 -b 0.0.0.0:8050 wsgi:server
-    networks: 
+      python3 -m gunicorn -w 2 -b 0.0.0.0:8050 wsgi:server
+    networks:
       - main
   nginx:
     build:
       context: ./nginx
+    args:
+      NGINX_CONFIG: nginx-prod.conf.template
     ports:
       - 80:80
       - 443:443
@@ -21,7 +23,7 @@ services:
       - ./etc/nginx/templates:/etc/nginx/templates:ro
       - ./etc/letsencrypt:/etc/letsencrypt:ro
       - ./certbot/data:/var/www/certbot
-    networks: 
+    networks:
       - main
   certbot:
     container_name: certbot
@@ -29,14 +31,14 @@ services:
     depends_on:
       - nginx
     command: >-
-             certonly --reinstall --webroot --webroot-path=/var/www/certbot
-             --email thornhill52320@gmail.com --agree-tos --no-eff-email
-             -d patterned-landscapes.stephentcasey.com
+      certonly --reinstall --webroot --webroot-path=/var/www/certbot
+      --email thornhill52320@gmail.com --agree-tos --no-eff-email
+      -d patterned-landscapes2.stephentcasey.com
     volumes:
       - ./etc/letsencrypt:/etc/letsencrypt
       - ./certbot/data:/var/www/certbot
-    networks: 
-      - main    
+    networks:
+      - main
 networks:
-    main:
-      driver: bridge    
+  main:
+    driver: bridge

@@ -1,26 +1,7 @@
+
 server {
     listen [::]:80;
     listen 80;
-    server_name patterned-landscapes.stephentcasey.com www.patterned-landscapes.stephentcasey.com;
-
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
-    }    
-
-    location / {
-      return 301 https://$host$request_uri;
-    }
-}
-
-server {    
-    listen [::]:443 ssl;
-    listen 443 ssl;
-    server_name patterned-landscapes.stephentcasey.com www.patterned-landscapes.stephentcasey.com;
-
-    ssl_certificate /etc/letsencrypt/live/patterned-landscapes.stephentcasey.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/patterned-landscapes.stephentcasey.com/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
     sendfile on;
     default_type application/octet-stream;
@@ -34,6 +15,8 @@ server {
     gzip_types        text/plain text/css application/json application/javascript application/x-javascript text/xml application/xml application/xml+rss text/javascript;
     gzip_comp_level   9;
 
+    root /usr/share/nginx/html;
+
     location = /.well-known/assetlinks.json {
         try_files $uri =404;
     }
@@ -46,5 +29,4 @@ server {
         proxy_redirect off;
         add_header X-nginx-test hi;
     }
-} 
-
+}
