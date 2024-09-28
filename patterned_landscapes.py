@@ -26,7 +26,7 @@ max_iteration_alert = dbc.Alert(
     is_open=False,
 )
 
-main_header = html.H1('Patterned Landscape Synthesizer', className='text-dark')
+main_header = html.H1('Patterned Landscape Synthesizer', style={'marginTop': 12}, className='text-dark')
 
 
 navbar = dbc.Navbar(color='primary', children=[
@@ -98,12 +98,16 @@ theory_block = dbc.Collapse(style={'marginTop': 24, 'marginBottom': 12}, id='the
                             )
 
 
-presets_block = html.Div(style={'marginTop': 24, 'marginBottom': 12}, children=[dbc.Row(children=[
-    html.H3('Select a preset:'),
+main_parameter_controls = dbc.Row(style={'marginTop': 24, 'marginBottom': 12}, children=[
+    html.H4("Parameters"),
     dbc.Col(md=3, children=[
-            dbc.Select(
-        id='model-preset', value='periodic_1', size='lg',
-        options=[
+        dbc.Label('Presets', id='presets-label', html_for='model-preset'),
+
+        dbc.Select(
+            style={'line-height': 12, 'marginBottom': 12},
+            id='model-preset', 
+            value='periodic_1',
+            options=[
             {'label': 'Periodic Dots', 'value': 'periodic_1'},
             {'label': 'Periodic Labyrinth', 'value': 'periodic_2'},
             {'label': 'Periodic Anisotropic', 'value': 'periodic_a'},
@@ -111,16 +115,9 @@ presets_block = html.Div(style={'marginTop': 24, 'marginBottom': 12}, children=[
             {'label': 'Scale-free Anisotropic', 'value': 'scale_free_a'},
             {'label': 'Random Forest', 'value': 'random_forest'},
             {'label': 'Custom', 'value': 'custom'}
-        ],
-    ),
+            ],
+        ),
     ]),
-])])
-
-
-
-
-main_parameter_controls = dbc.Row(children=[
-    html.H4("Parameters"),
     dbc.Col(md=3, children=[
         dbc.Label('Kernel function', id='kernel-function-label', html_for='kernel-function'),
         dbc.Select(id='kernel-function',
@@ -287,7 +284,6 @@ app.layout = dbc.Container(fluid=True, children=[
     navbar,
     usage_block,
     theory_block,
-    presets_block,
     parameter_block,
     start_stop_row,
     top_figure_block,
