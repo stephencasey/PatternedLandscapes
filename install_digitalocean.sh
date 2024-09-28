@@ -8,6 +8,7 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 sudo apt install docker-ce -y
 sudo usermod -aG docker thornhill523
 sudo su - thornhill523
+cd patternedlandscapes
 
 # Install docker compose
 mkdir -p ~/.docker/cli-plugins/
