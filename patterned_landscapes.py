@@ -295,7 +295,6 @@ app.layout = dbc.Container(fluid=True, children=[
     tooltips,
     dcc.Interval(id='interval', interval=500, max_intervals=max_dash_interval, disabled=True),
     dcc.Store(id='kernel-data'),
-    dcc.Store(id='max-facilitation-data'),
     dcc.Store(id='landscape-data'),
 ])
 
@@ -389,7 +388,6 @@ def make_kernel(distance, model, scaling_parameter, wavelength_parameter):
     Output('density-correction', 'value'),
     Output('wavelength-collapse', 'is_open'),
     Output('kernel-data', 'data'),
-    Output('max-facilitation-data', 'data'),
     Input('model-preset', 'value'),
     Input('kernel-function', 'value'),
     Input('invert-switch', 'on'),
@@ -528,14 +526,9 @@ def build_kernels(model_preset, kernel_function, invert_kernel, scaling_paramete
                              margin=dict(l=30, r=30, b=30, t=30),
                              )
 
-    # Determine max & min facilitation possible for each cell to normalize facilitation function in run_model
-    landscape_ones = np.ones(landscape_size)
-    positive_kernel = kernel.copy()
-    positive_kernel[positive_kernel < 0] = 0
-    max_facilitation = signal.convolve2d(landscape_ones, positive_kernel, boundary='fill', mode='same')
+
     return model_preset, kernel_function, invert_kernel, scaling_parameter, scaling_min, elongation_parameter, \
-           wavelength_parameter, c_kernel_fig, kernel_fig, target_density, density_correction, wavelength_open, kernel, \
-           max_facilitation
+           wavelength_parameter, c_kernel_fig, kernel_fig, target_density, density_correction, wavelength_open, kernel
 
 
 @app.callback(
@@ -547,9 +540,8 @@ def build_kernels(model_preset, kernel_function, invert_kernel, scaling_paramete
     State('change-per-iteration', 'value'),
     State('landscape-data', 'data'),
     State('kernel-data', 'data'),
-    State('max-facilitation-data', 'data'),
     State('target-density', 'value'))
-def run_model(density_correction, change_per_iteration, landscape, kernel, max_facilitation, target_density, ):
+def run_model(density_correction, change_per_iteration, landscape, kernel, target_density, ):
     """ Runs the model and produces figures using Dash interval callbacks """
 
     trigger_event = callback_context.triggered[0]['prop_id'].split('.')[0]
@@ -559,6 +551,12 @@ def run_model(density_correction, change_per_iteration, landscape, kernel, max_f
         
     # Interval acts as an outer loop
     else:
+        # Determine max & min facilitation possible for each cell to normalize facilitation function in run_model
+        landscape_ones = np.ones(landscape_size)
+        positive_kernel = np.array(kernel.copy())
+        positive_kernel[positive_kernel < 0] = 0
+        max_facilitation = signal.convolve2d(landscape_ones, positive_kernel, boundary='fill', mode='same')
+
         landscape = np.array(landscape)
         # Rescale target density higher for kernels with negative values
         effective_density = target_density * density_correction
