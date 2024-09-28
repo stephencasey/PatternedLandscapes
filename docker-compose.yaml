@@ -7,7 +7,6 @@ services:
       - "8050:8050"
 
     volumes:
-      - ./etc/nginx/templates:/etc/nginx/templates:ro
       - ./etc/letsencrypt:/etc/letsencrypt:ro
       - ./certbot/data:/var/www/certbot
     command: >-
@@ -19,7 +18,6 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./etc/nginx/templates:/etc/nginx/templates:ro
       - ./etc/letsencrypt:/etc/letsencrypt:ro
       - ./certbot/data:/var/www/certbot
   certbot:
