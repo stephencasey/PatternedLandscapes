@@ -21,6 +21,10 @@ server {
 
     root /usr/share/nginx/html;
 
+    location = /.well-known/assetlinks.json {
+        try_files $uri =404;
+    }
+
     location / {
         proxy_pass http://flask:8050;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
