@@ -12,9 +12,6 @@ services:
       - ./certbot/data:/var/www/certbot
     command: >-
       python3 -m gunicorn -w 2 -b 0.0.0.0:8050 wsgi:server
-    
-    networks:
-      - main
   nginx:
     build:
       context: ./nginx
@@ -25,8 +22,6 @@ services:
       - ./etc/nginx/templates:/etc/nginx/templates:ro
       - ./etc/letsencrypt:/etc/letsencrypt:ro
       - ./certbot/data:/var/www/certbot
-    networks:
-      - main
   certbot:
     container_name: certbot
     image: certbot/certbot:latest
@@ -39,8 +34,3 @@ services:
     volumes:
       - ./etc/letsencrypt:/etc/letsencrypt
       - ./certbot/data:/var/www/certbot
-    networks:
-      - main
-networks:
-  main:
-    driver: bridge
