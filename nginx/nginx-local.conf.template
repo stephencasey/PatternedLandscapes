@@ -2,6 +2,8 @@
 server {
     listen [::]:80;
     listen 80;
+    server_name patterned-landscapes2.stephentcasey.com www.patterned-landscapes2.stephentcasey.com;
+
 
     sendfile on;
     default_type application/octet-stream;
