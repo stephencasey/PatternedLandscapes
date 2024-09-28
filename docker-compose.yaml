@@ -12,6 +12,8 @@ services:
     command: >-
       python3 -m gunicorn -w 2 -b 0.0.0.0:8050 wsgi:server
   nginx:
+    depends_on:
+      - serviceName
     build:
       context: ./nginx
     ports:
