@@ -171,7 +171,7 @@ expert_mode_controls = dbc.Collapse(id='expert-mode-block', is_open=True, childr
         ]),
         dbc.Col(md=2, children=[
             dbc.Label('Interval length', id='interval-length-label', html_for='interval-length'),
-            dcc.Slider(id='interval-length', min=250, max=2000, step=50, value=400, marks=None,
+            dcc.Slider(id='interval-length', min=250, max=2000, step=50, value=500, marks=None,
                        tooltip={'placement': 'bottom', 'always_visible': True}),
         ]),
         dbc.Col(md=2, children=[
