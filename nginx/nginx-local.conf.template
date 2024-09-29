@@ -2,7 +2,7 @@
 server {
     listen [::]:80;
     listen 80;
-    server_name patterned-landscapes2.stephentcasey.com www.patterned-landscapes2.stephentcasey.com;
+    server_name landscape-patterns.stephentcasey.com www.landscape-patterns.stephentcasey.com;
 
 
     sendfile on;

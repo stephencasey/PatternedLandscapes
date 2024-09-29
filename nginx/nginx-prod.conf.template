@@ -1,7 +1,7 @@
 server {
     listen [::]:80;
     listen 80;
-    server_name patterned-landscapes2.stephentcasey.com www.patterned-landscapes2.stephentcasey.com;
+    server_name landscape-patterns.stephentcasey.com www.landscape-patterns.stephentcasey.com;
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
@@ -15,10 +15,10 @@ server {
 server {    
     listen [::]:443 ssl;
     listen 443 ssl;
-    server_name patterned-landscapes2.stephentcasey.com www.patterned-landscapes2.stephentcasey.com;
+    server_name landscape-patterns.stephentcasey.com www.landscape-patterns.stephentcasey.com;
 
-    ssl_certificate /etc/letsencrypt/live/patterned-landscapes2.stephentcasey.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/patterned-landscapes2.stephentcasey.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/landscape-patterns.stephentcasey.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/landscape-patterns.stephentcasey.com/privkey.pem;
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
