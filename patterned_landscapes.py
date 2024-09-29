@@ -222,7 +222,7 @@ main_parameter_controls = dbc.Row(
     children=[
         html.H4("Parameters"),
         dbc.Col(
-            md=3,
+            md=2,
             children=[
                 dbc.Label("Presets", id="presets-label", html_for="model-preset"),
                 dbc.Select(
@@ -242,7 +242,7 @@ main_parameter_controls = dbc.Row(
             ],
         ),
         dbc.Col(
-            md=3,
+            md=2,
             children=[
                 dbc.Label(
                     "Kernel function",
@@ -316,31 +316,6 @@ main_parameter_controls = dbc.Row(
             ],
         ),
         dbc.Col(
-            md=2,
-            children=[
-                dbc.Collapse(
-                    id="wavelength-collapse",
-                    is_open=True,
-                    children=[
-                        dbc.Label(
-                            "Wavelength",
-                            id="wavelength-parameter-label",
-                            html_for="wavelength-parameter",
-                        ),
-                        dcc.Slider(
-                            id="wavelength-parameter",
-                            min=1,
-                            max=10,
-                            step=0.1,
-                            value=5,
-                            marks=None,
-                            tooltip={"placement": "bottom", "always_visible": True},
-                        ),
-                    ],
-                )
-            ],
-        ),
-        dbc.Col(
             md=1,
             children=[
                 dbc.Label(
@@ -349,93 +324,124 @@ main_parameter_controls = dbc.Row(
                 daq.BooleanSwitch(id="expert-mode-switch", on=False),
             ],
         ),
-    ],
-)
-
-
-expert_mode_controls = dbc.Collapse(
-    id="expert-mode-block",
-    is_open=True,
-    children=[
-        dbc.Row(
+        dbc.Collapse(
+            id="expert-mode-block",
+            is_open=True,
             children=[
-                dbc.Col(
-                    md=2,
+                dbc.Row(
                     children=[
-                        dbc.Label(
-                            "Invert kernel", id="invert-label", html_for="invert-switch"
+                        dbc.Col(
+                            md=2,
+                            children=[
+                                dbc.Label(
+                                    "Invert kernel",
+                                    id="invert-label",
+                                    html_for="invert-switch",
+                                ),
+                                daq.BooleanSwitch(id="invert-switch", on=False),
+                            ],
                         ),
-                        daq.BooleanSwitch(id="invert-switch", on=False),
-                    ],
-                ),
-                dbc.Col(
-                    md=2,
-                    children=[
-                        dbc.Label(
-                            "Density correction",
-                            id="density-correction-label",
-                            html_for="density-correction",
+                        dbc.Col(
+                            md=2,
+                            children=[
+                                dbc.Collapse(
+                                    id="wavelength-collapse",
+                                    is_open=True,
+                                    children=[
+                                        dbc.Label(
+                                            "Wavelength",
+                                            id="wavelength-parameter-label",
+                                            html_for="wavelength-parameter",
+                                        ),
+                                        dcc.Slider(
+                                            id="wavelength-parameter",
+                                            min=1,
+                                            max=10,
+                                            step=0.1,
+                                            value=5,
+                                            marks=None,
+                                            tooltip={
+                                                "placement": "bottom",
+                                                "always_visible": True,
+                                            },
+                                        ),
+                                    ],
+                                )
+                            ],
                         ),
-                        dcc.Slider(
-                            id="density-correction",
-                            min=0,
-                            max=5,
-                            step=0.1,
-                            value=1,
-                            marks=None,
-                            tooltip={"placement": "bottom", "always_visible": True},
+                        dbc.Col(
+                            md=2,
+                            children=[
+                                dbc.Label(
+                                    "Density correction",
+                                    id="density-correction-label",
+                                    html_for="density-correction",
+                                ),
+                                dcc.Slider(
+                                    id="density-correction",
+                                    min=0,
+                                    max=5,
+                                    step=0.1,
+                                    value=1,
+                                    marks=None,
+                                    tooltip={
+                                        "placement": "bottom",
+                                        "always_visible": True,
+                                    },
+                                ),
+                            ],
                         ),
-                    ],
-                ),
-                dbc.Col(
-                    md=2,
-                    children=[
-                        dbc.Label(
-                            "Interval length",
-                            id="interval-length-label",
-                            html_for="interval-length",
+                        dbc.Col(
+                            md=2,
+                            children=[
+                                dbc.Label(
+                                    "Interval length",
+                                    id="interval-length-label",
+                                    html_for="interval-length",
+                                ),
+                                dcc.Slider(
+                                    id="interval-length",
+                                    min=250,
+                                    max=2000,
+                                    step=50,
+                                    value=default_interval_length,
+                                    marks=None,
+                                    tooltip={
+                                        "placement": "bottom",
+                                        "always_visible": True,
+                                    },
+                                ),
+                            ],
                         ),
-                        dcc.Slider(
-                            id="interval-length",
-                            min=250,
-                            max=2000,
-                            step=50,
-                            value=default_interval_length,
-                            marks=None,
-                            tooltip={"placement": "bottom", "always_visible": True},
+                        dbc.Col(
+                            md=2,
+                            children=[
+                                dbc.Label(
+                                    "Δ per iteration",
+                                    id="change-per-iter-label",
+                                    html_for="change-per-iter",
+                                ),
+                                dcc.Slider(
+                                    id="change-per-iteration",
+                                    min=0.05,
+                                    max=1,
+                                    step=0.05,
+                                    value=0.15,
+                                    marks=None,
+                                    tooltip={
+                                        "placement": "bottom",
+                                        "always_visible": True,
+                                    },
+                                ),
+                            ],
                         ),
-                    ],
-                ),
-                dbc.Col(
-                    md=2,
-                    children=[
-                        dbc.Label(
-                            "Δ per iteration",
-                            id="change-per-iter-label",
-                            html_for="change-per-iter",
-                        ),
-                        dcc.Slider(
-                            id="change-per-iteration",
-                            min=0.05,
-                            max=1,
-                            step=0.05,
-                            value=0.15,
-                            marks=None,
-                            tooltip={"placement": "bottom", "always_visible": True},
-                        ),
-                    ],
-                ),
-            ]
-        )
+                    ]
+                )
+            ],
+        ),
     ],
 )
 
-parameter_block = html.Div(
-    children=[
-        main_parameter_controls,
-        expert_mode_controls,
-    ]
-)
 
 start_stop_row = dbc.Row(
     children=[
@@ -585,7 +591,7 @@ app.layout = dbc.Container(
         navbar,
         usage_block,
         theory_block,
-        parameter_block,
+        main_parameter_controls,
         start_stop_row,
         top_figure_block,
         discrete_kernel_block,

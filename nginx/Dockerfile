@@ -3,7 +3,8 @@ FROM nginx:latest
 
 RUN rm /etc/nginx/conf.d/default.conf
 
-COPY nginx-prod.conf.template /etc/nginx/templates/
+ARG NGINX_CONFIG
+COPY $NGINX_CONFIG /etc/nginx/templates/
 COPY nginx-entrypoint.sh nginx-entrypoint.sh
 
 ENTRYPOINT bash ./nginx-entrypoint.sh
