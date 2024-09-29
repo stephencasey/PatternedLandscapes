@@ -5,6 +5,9 @@ services:
     build: .
     ports:
       - "8050:8050"
+    volumes:
+      - ./etc/letsencrypt:/etc/letsencrypt:ro
+      - ./certbot/data:/var/www/certbot
     command: >-
       python3 -m gunicorn -w 2 -b 0.0.0.0:8050 wsgi:server
   nginx:
