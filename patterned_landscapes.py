@@ -19,7 +19,7 @@ grid_size = 200
 loop_iterations = 4
 target_cumulative_probability = 0.99
 landscape_size = (grid_size, grid_size)
-default_interval_length = 450
+default_interval_length = 500
 max_intervals = 500
 
 
