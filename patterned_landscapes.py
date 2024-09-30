@@ -230,8 +230,8 @@ main_parameter_controls = dbc.Row(
                     id="model-preset",
                     value="periodic_1",
                     options=[
-                        {"label": "Periodic Dots", "value": "periodic_1"},
-                        {"label": "Periodic Labyrinth", "value": "periodic_2"},
+                        {"label": "Periodic Labyrinth", "value": "periodic_1"},
+                        {"label": "Periodic Dots", "value": "periodic_2"},
                         {"label": "Periodic Anisotropic", "value": "periodic_a"},
                         {"label": "Scale-free", "value": "scale_free_i"},
                         {"label": "Scale-free Anisotropic", "value": "scale_free_a"},
@@ -738,16 +738,8 @@ def build_kernels(
         scaling_parameter = 3
         elongation_parameter = 1
         target_density = 0.5
-        density_correction = 1
+        density_correction = 1    
     elif model_preset == "periodic_1":
-        kernel_function = "sinusoid"
-        invert_kernel = False
-        scaling_parameter = 0.5
-        elongation_parameter = 1
-        target_density = 0.5
-        wavelength_parameter = 6
-        density_correction = 1
-    elif model_preset == "periodic_2":
         kernel_function = "sinusoid"
         invert_kernel = False
         scaling_parameter = 0.5
@@ -755,6 +747,14 @@ def build_kernels(
         target_density = 0.7
         wavelength_parameter = 7.5
         density_correction = 1.3
+    elif model_preset == "periodic_2":
+        kernel_function = "sinusoid"
+        invert_kernel = False
+        scaling_parameter = 0.5
+        elongation_parameter = 1
+        target_density = 0.5
+        wavelength_parameter = 6
+        density_correction = 1
     elif model_preset == "periodic_a":
         kernel_function = "sinusoid"
         invert_kernel = False
