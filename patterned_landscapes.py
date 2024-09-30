@@ -9,7 +9,7 @@ import dash_daq as daq
 import numpy as np
 import plotly.graph_objects as go
 from assets import theory_text
-from dash import html, dcc, callback_context, Output, Input, State
+from dash import html, dcc, callback_context, Output, Input, State, ctx
 from dash_extensions.enrich import Dash, Trigger
 from flask import Flask
 from scipy import signal
@@ -1011,33 +1011,38 @@ def run_model(
     Output("interval", "disabled"),
     Output("start-stop", "style"),
     Output("start-stop", "children"),
-    Input("start-stop", "n_clicks"),
     Input("interval-length", "value"),
+    Input("interval", "disabled"),
+    Input("start-stop", "n_clicks"),
+    Input("reset", "n_clicks"),
 )
 def interval_options(
-    n_clicks,
     length,
+    interval_disabled,
+    reset,
+    n_clicks
 ):
-    if not n_clicks:
+    trigger_context = ctx.triggered_id
+    if trigger_context == 'start-stop': 
+        interval_disabled = not interval_disabled
+    else:
+        interval_disabled = True
+
+    if interval_disabled: 
         return (
             length,
             True,
             {"background-color": "#40d933", "color": "white", "line-height": 0},
             "Start",
-        )
-    elif (n_clicks % 2) == 0:
+        )   
+    else:
         return (
             length,
-            True,
-            {"background-color": "#40d933", "color": "white", "line-height": 0},
-            "Start",
+            False,
+            {"background-color": "#FF4500", "color": "white", "line-height": 0},
+            "Stop",
         )
-    return (
-        length,
-        False,
-        {"background-color": "#FF4500", "color": "white", "line-height": 0},
-        "Stop",
-    )
+    
 
 
 # Turn on/off expert mode
