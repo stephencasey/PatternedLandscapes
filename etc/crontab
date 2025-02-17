@@ -1,2 +1,0 @@
-# m h  dom mon dow   command
-0 3  * * *  /home/thornhill523/cron_job.sh
